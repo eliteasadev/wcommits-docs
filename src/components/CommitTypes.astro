@@ -1,0 +1,347 @@
+---
+/**
+ * @file CommitTypes.astro
+ * @description Catálogo de los 11 tipos estándar de Conventional Commits con filtrado interactivo por categoría.
+ */
+
+const typesList = [
+  {
+    type: "feat",
+    nameEn: "Feature",
+    nameEs: "Característica",
+    badgeBg: "rgba(52, 211, 153, 0.15)",
+    badgeColor: "#34d399",
+    descEn: "Introducing a new feature, capability, or user-facing functionality to the codebase.",
+    descEs: "Introduce una nueva característica o funcionalidad para los usuarios en la base de código.",
+    exampleCmd: 'npx wcommits -t feat -s auth -m "add OAuth2 login provider"',
+    exampleOutput: 'feat(auth): add OAuth2 login provider'
+  },
+  {
+    type: "fix",
+    nameEn: "Bug Fix",
+    nameEs: "Corrección de Error",
+    badgeBg: "rgba(251, 113, 133, 0.15)",
+    badgeColor: "#fb7185",
+    descEn: "Fixing a bug, crash, logic flaw, or unintended error in production code.",
+    descEs: "Corrige un bug, fallo de lógica o error imprevisto en el código de producción.",
+    exampleCmd: 'npx wcommits -t fix -s parser -m "handle unexpected null token"',
+    exampleOutput: 'fix(parser): handle unexpected null token'
+  },
+  {
+    type: "docs",
+    nameEn: "Documentation",
+    nameEs: "Documentación",
+    badgeBg: "rgba(0, 242, 254, 0.15)",
+    badgeColor: "#00f2fe",
+    descEn: "Updating documentation files, inline code comments, READMEs, or API guides.",
+    descEs: "Actualiza archivos de documentación, comentarios en código, READMEs o guías de API.",
+    exampleCmd: 'npx wcommits -t docs -m "update API reference for v2 endpoints"',
+    exampleOutput: 'docs: update API reference for v2 endpoints'
+  },
+  {
+    type: "style",
+    nameEn: "Code Style",
+    nameEs: "Estilo de Código",
+    badgeBg: "rgba(192, 132, 252, 0.15)",
+    badgeColor: "#c084fc",
+    descEn: "Changes that do not affect the logic of the code (whitespace, formatting, missing semi-colons).",
+    descEs: "Cambios que no afectan la lógica del código (espacios en blanco, formato, punto y coma).",
+    exampleCmd: 'npx wcommits -t style -m "reformat with prettier"',
+    exampleOutput: 'style: reformat with prettier'
+  },
+  {
+    type: "refactor",
+    nameEn: "Refactor",
+    nameEs: "Refactorización",
+    badgeBg: "rgba(129, 140, 248, 0.15)",
+    badgeColor: "#818cf8",
+    descEn: "Restructuring existing code without changing external behavior or adding features.",
+    descEs: "Reestructura el código existente sin cambiar el comportamiento externo ni agregar funciones.",
+    exampleCmd: 'npx wcommits -t refactor -s db -m "simplify connection pooling"',
+    exampleOutput: 'refactor(db): simplify connection pooling'
+  },
+  {
+    type: "perf",
+    nameEn: "Performance",
+    nameEs: "Rendimiento",
+    badgeBg: "rgba(251, 191, 36, 0.15)",
+    badgeColor: "#fbbf24",
+    descEn: "A code change that improves performance, rendering speed, or reduces memory consumption.",
+    descEs: "Cambio de código que mejora la velocidad de ejecución, renderizado o consumo de memoria.",
+    exampleCmd: 'npx wcommits -t perf -s render -m "memoize heavy list calculations"',
+    exampleOutput: 'perf(render): memoize heavy list calculations'
+  },
+  {
+    type: "test",
+    nameEn: "Tests",
+    nameEs: "Pruebas / Tests",
+    badgeBg: "rgba(56, 189, 248, 0.15)",
+    badgeColor: "#38bdf8",
+    descEn: "Adding missing tests or correcting existing unit/integration/e2e test suites.",
+    descEs: "Agrega pruebas faltantes o corrige suites de pruebas unitarias/integración/e2e existentes.",
+    exampleCmd: 'npx wcommits -t test -s auth -m "add unit test suite for token refresh"',
+    exampleOutput: 'test(auth): add unit test suite for token refresh'
+  },
+  {
+    type: "build",
+    nameEn: "Build System",
+    nameEs: "Sistema de Build",
+    badgeBg: "rgba(99, 102, 241, 0.15)",
+    badgeColor: "#6366f1",
+    descEn: "Changes that affect the build system or external dependencies (npm, webpack, astro, vite).",
+    descEs: "Cambios que afectan el sistema de compilación o dependencias externas (npm, astro, vite).",
+    exampleCmd: 'npx wcommits -t build -m "upgrade astro to v7.1.5"',
+    exampleOutput: 'build: upgrade astro to v7.1.5'
+  },
+  {
+    type: "ci",
+    nameEn: "Continuous Integration",
+    nameEs: "Integración Continua",
+    badgeBg: "rgba(168, 85, 247, 0.15)",
+    badgeColor: "#a855f7",
+    descEn: "Changes to CI/CD configuration files and scripts (GitHub Actions, CircleCI, GitLab CI).",
+    descEs: "Cambios a los archivos de configuración y scripts de CI/CD (GitHub Actions, GitLab CI).",
+    exampleCmd: 'npx wcommits -t ci -m "add automated lint check workflow"',
+    exampleOutput: 'ci: add automated lint check workflow'
+  },
+  {
+    type: "chore",
+    nameEn: "Chore",
+    nameEs: "Tareas de Mantenimiento",
+    badgeBg: "rgba(148, 163, 184, 0.15)",
+    badgeColor: "#94a3b8",
+    descEn: "Other maintenance tasks, tooling updates, or repository house-keeping without production code changes.",
+    descEs: "Otras tareas de mantenimiento, actualización de herramientas o limpieza de repositorio.",
+    exampleCmd: 'npx wcommits -t chore -m "update gitignore patterns"',
+    exampleOutput: 'chore: update gitignore patterns'
+  },
+  {
+    type: "revert",
+    nameEn: "Revert",
+    nameEs: "Revertir Commit",
+    badgeBg: "rgba(244, 63, 94, 0.15)",
+    badgeColor: "#f43f5e",
+    descEn: "Reverting a previous commit that caused regressions or broken functionality.",
+    descEs: "Revierte un commit previo que causó regresiones o errores de funcionamiento.",
+    exampleCmd: 'npx wcommits -t revert -m "revert commit 8f3a92b"',
+    exampleOutput: 'revert: revert commit 8f3a92b'
+  }
+];
+---
+
+<section class="section" id="types">
+  <div class="container">
+    <div class="section-header">
+      <div class="badge-eyebrow" data-i18n="types_eyebrow">Commit Types Specification</div>
+      <h2 class="section-title" data-i18n="types_title">The 11 Allowed Commit Types</h2>
+      <p class="section-subtitle" data-i18n="types_subtitle">
+        wcommits enforces the Conventional Commits v1.0.0 specification with strict runtime type checking.
+      </p>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="types-filter-bar">
+      <button class="filter-btn active" data-filter="all" data-i18n="filter_all">All Types (11)</button>
+      <button class="filter-btn" data-filter="code" data-i18n="filter_code">Code & Features</button>
+      <button class="filter-btn" data-filter="tooling" data-i18n="filter_tooling">Tooling & Infra</button>
+      <button class="filter-btn" data-filter="maintenance" data-i18n="filter_maintenance">Maintenance</button>
+    </div>
+
+    <!-- Grid -->
+    <div class="types-grid">
+      {typesList.map(item => (
+        <div class="glass-card type-card" data-category={
+          ['feat', 'fix', 'refactor', 'perf'].includes(item.type) ? 'code' :
+          ['build', 'ci', 'test'].includes(item.type) ? 'tooling' : 'maintenance'
+        }>
+          <div class="type-card-header">
+            <span class="type-tag" style={`background: ${item.badgeBg}; color: ${item.badgeColor}; border: 1px solid ${item.badgeColor}40;`}>
+              {item.type}
+            </span>
+            <span class="type-name" data-name-en={item.nameEn} data-name-es={item.nameEs}>{item.nameEs}</span>
+          </div>
+
+          <p class="type-desc" data-desc-en={item.descEn} data-desc-es={item.descEs}>{item.descEs}</p>
+
+          <div class="type-example-box">
+            <div class="example-label" data-i18n="example_output_lbl">Example Output:</div>
+            <code class="example-output">{item.exampleOutput}</code>
+          </div>
+
+          <button class="btn-copy-type-cmd" data-cmd={item.exampleCmd} title="Copy CLI Command">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span data-i18n="btn_copy_cmd">Copy Command</span>
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .types-filter-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5rem 1.1rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .filter-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+  }
+
+  .filter-btn.active {
+    background: rgba(0, 242, 254, 0.15);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+  }
+
+  .types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .type-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+
+  .type-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .type-tag {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .type-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .type-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .type-example-box {
+    background: #090d16;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 0.85rem;
+  }
+
+  .example-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+  }
+
+  .example-output {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent-cyan);
+    word-break: break-all;
+  }
+
+  .btn-copy-type-cmd {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-copy-type-cmd:hover {
+    background: rgba(0, 242, 254, 0.15);
+    border-color: var(--accent-cyan);
+    color: var(--text-primary);
+  }
+</style>
+
+<script>
+  import { copyAndNotify } from '../services/feedback';
+  import { i18n } from '../i18n/i18n-service';
+
+  // Filter functionality
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const typeCards = document.querySelectorAll('.type-card');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.getAttribute('data-filter');
+
+      typeCards.forEach(card => {
+        const category = card.getAttribute('data-category');
+        if (filter === 'all' || category === filter) {
+          (card as HTMLElement).style.display = 'flex';
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Dynamic language switcher for custom data-name and data-desc
+  function updateTypeCardTexts() {
+    const lang = i18n.getLanguage();
+    document.querySelectorAll('.type-name').forEach(el => {
+      const val = lang === 'en' ? el.getAttribute('data-name-en') : el.getAttribute('data-name-es');
+      if (val) el.textContent = val;
+    });
+    document.querySelectorAll('.type-desc').forEach(el => {
+      const val = lang === 'en' ? el.getAttribute('data-desc-en') : el.getAttribute('data-desc-es');
+      if (val) el.textContent = val;
+    });
+  }
+
+  updateTypeCardTexts();
+  i18n.subscribe(updateTypeCardTexts);
+
+  // Copy command
+  document.querySelectorAll('.btn-copy-type-cmd').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cmd = btn.getAttribute('data-cmd');
+      if (cmd) {
+        copyAndNotify(cmd, i18n.t('toast_copied_example'));
+      }
+    });
+  });
+</script>

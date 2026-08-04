@@ -1,0 +1,546 @@
+---
+/**
+ * @file InteractiveBuilder.astro
+ * @description Generador interactivo en tiempo real de mensajes Conventional Commits y comandos CLI/Git.
+ */
+---
+
+<section class="section builder-section" id="builder">
+  <div class="container">
+    <div class="section-header">
+      <div class="badge-eyebrow" data-i18n="builder_eyebrow">Interactive Studio</div>
+      <h2 class="section-title" data-i18n="builder_title">Live Commit Message Generator</h2>
+      <p class="section-subtitle" data-i18n="builder_subtitle">
+        Compose, validate, and preview Conventional Commit messages in real-time. Copy the resulting CLI flags or direct git command with one click.
+      </p>
+    </div>
+
+    <div class="builder-layout">
+      <!-- Input Controls Panel -->
+      <div class="glass-card builder-controls">
+        <div class="controls-header">
+          <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span data-i18n="builder_controls_title">Commit Parameters</span>
+          </h3>
+          <button class="reset-btn" id="builder-reset-btn" title="Reset all fields" data-i18n="builder_reset">Reset</button>
+        </div>
+
+        <form id="builder-form" onsubmit="event.preventDefault();">
+          <!-- 1. Commit Type -->
+          <div class="form-group">
+            <label class="form-label">
+              <span><span data-i18n="lbl_type">Commit Type</span> <span class="required">*</span></span>
+              <span class="label-tip" data-i18n="lbl_select_intent">Select intent</span>
+            </label>
+            <div class="type-selector-grid" id="type-selector-grid">
+              <button type="button" class="type-badge active" data-type="feat">feat</button>
+              <button type="button" class="type-badge" data-type="fix">fix</button>
+              <button type="button" class="type-badge" data-type="docs">docs</button>
+              <button type="button" class="type-badge" data-type="style">style</button>
+              <button type="button" class="type-badge" data-type="refactor">refactor</button>
+              <button type="button" class="type-badge" data-type="perf">perf</button>
+              <button type="button" class="type-badge" data-type="test">test</button>
+              <button type="button" class="type-badge" data-type="build">build</button>
+              <button type="button" class="type-badge" data-type="ci">ci</button>
+              <button type="button" class="type-badge" data-type="chore">chore</button>
+              <button type="button" class="type-badge" data-type="revert">revert</button>
+            </div>
+          </div>
+
+          <!-- 2. Scope & Breaking Row -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="builder-scope" class="form-label">
+                <span><span data-i18n="lbl_scope">Scope</span> <span class="optional" data-i18n="lbl_scope_opt">(optional)</span></span>
+              </label>
+              <input type="text" id="builder-scope" class="form-input" placeholder="e.g., auth, api, parser" value="auth" />
+              <div class="scope-suggestions">
+                <span class="sug-pill" data-val="auth">auth</span>
+                <span class="sug-pill" data-val="api">api</span>
+                <span class="sug-pill" data-val="ui">ui</span>
+                <span class="sug-pill" data-val="deps">deps</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <span data-i18n="lbl_breaking">Breaking Change</span>
+              </label>
+              <label class="toggle-switch">
+                <input type="checkbox" id="builder-breaking" />
+                <span class="switch-slider"></span>
+                <span class="switch-label" data-i18n="lbl_mark_breaking">Mark Breaking (!)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 3. Short Description -->
+          <div class="form-group">
+            <label for="builder-message" class="form-label">
+              <span><span data-i18n="lbl_desc">Short Description</span> <span class="required">*</span></span>
+              <span class="label-tip" data-i18n="lbl_desc_tip">Imperative mood, no period</span>
+            </label>
+            <input type="text" id="builder-message" class="form-input" placeholder="add user authentication" value="add JWT token validation" />
+          </div>
+
+          <!-- 4. Extended Body -->
+          <div class="form-group">
+            <label for="builder-body" class="form-label">
+              <span><span data-i18n="lbl_body">Extended Body</span> <span class="optional" data-i18n="lbl_scope_opt">(optional)</span></span>
+            </label>
+            <textarea id="builder-body" class="form-textarea" rows="3" placeholder="Additional contextual details, rationale, or breaking change details..."></textarea>
+          </div>
+        </form>
+      </div>
+
+      <!-- Live Output Visualizer -->
+      <div class="builder-outputs">
+        <!-- Card 1: Formatted Spec Preview -->
+        <div class="glass-card preview-card">
+          <div class="card-title">
+            <span class="status-dot"></span>
+            <span data-i18n="out_spec_title">Formatted Commit Message</span>
+          </div>
+          <div class="spec-preview-box">
+            <div class="commit-header-line">
+              <span class="part-type" id="out-type">feat</span><span class="part-scope" id="out-scope">(auth)</span><span class="part-break" id="out-break"></span>: <span class="part-desc" id="out-desc">add JWT token validation</span>
+            </div>
+            <div class="commit-body-line" id="out-body-wrapper" style="display: none;">
+              <br/>
+              <span class="part-body" id="out-body"></span>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-full" id="copy-spec-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span data-i18n="btn_copy_formatted">Copy Formatted Message</span>
+          </button>
+        </div>
+
+        <!-- Card 2: Generated CLI Command -->
+        <div class="glass-card preview-card">
+          <div class="card-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+            <span data-i18n="out_cli_title">Generated wcommits CLI Command</span>
+          </div>
+          <div class="cmd-preview-box">
+            <code id="out-cli-cmd">npx wcommits -t feat -s auth -m "add JWT token validation"</code>
+          </div>
+          <button class="btn btn-secondary btn-full" id="copy-cli-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span data-i18n="btn_copy_cli">Copy CLI Command</span>
+          </button>
+        </div>
+
+        <!-- Card 3: Git Execution Command -->
+        <div class="glass-card preview-card">
+          <div class="card-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path></svg>
+            <span data-i18n="out_git_title">Direct Git Commit Command</span>
+          </div>
+          <div class="cmd-preview-box">
+            <code id="out-git-cmd">git commit -m "feat(auth): add JWT token validation"</code>
+          </div>
+          <button class="btn btn-secondary btn-full" id="copy-git-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span data-i18n="btn_copy_git">Copy Git Command</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .builder-section {
+    background: radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.5) 0%, rgba(7, 9, 14, 0.8) 100%);
+  }
+
+  .builder-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .builder-controls {
+    padding: 1.75rem;
+  }
+
+  .controls-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .controls-header h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ffffff;
+  }
+
+  .controls-header h3 svg {
+    color: var(--accent-cyan);
+  }
+
+  .reset-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .reset-btn:hover {
+    color: var(--accent-rose);
+    border-color: var(--accent-rose);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .form-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .required { color: var(--accent-rose); }
+  .optional { color: var(--text-muted); font-size: 0.75rem; font-weight: 400; }
+  .label-tip { color: var(--text-muted); font-size: 0.75rem; font-weight: 400; }
+
+  .form-input, .form-textarea {
+    width: 100%;
+    background: #090d16;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    color: #ffffff;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    transition: border-color var(--transition-fast);
+  }
+
+  .form-input:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+  }
+
+  .type-selector-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .type-badge {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .type-badge:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+  }
+
+  .type-badge.active {
+    background: rgba(0, 242, 254, 0.15);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    font-weight: 700;
+  }
+
+  .scope-suggestions {
+    display: flex;
+    gap: 0.35rem;
+    margin-top: 0.25rem;
+  }
+
+  .sug-pill {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .sug-pill:hover {
+    color: var(--accent-cyan);
+    background: rgba(0, 242, 254, 0.1);
+  }
+
+  .toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+  }
+
+  .toggle-switch input { display: none; }
+
+  .switch-slider {
+    width: 40px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    position: relative;
+    transition: background var(--transition-fast);
+    border: 1px solid var(--border-color);
+  }
+
+  .switch-slider::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: #ffffff;
+    border-radius: 50%;
+    transition: transform var(--transition-fast);
+  }
+
+  .toggle-switch input:checked + .switch-slider {
+    background: var(--accent-rose);
+  }
+
+  .toggle-switch input:checked + .switch-slider::after {
+    transform: translateX(18px);
+  }
+
+  .switch-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .builder-outputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .preview-card {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .card-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-cyan);
+    box-shadow: 0 0 8px var(--accent-cyan);
+  }
+
+  .spec-preview-box {
+    background: #090d16;
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    color: #ffffff;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .part-type { color: var(--accent-cyan); font-weight: 700; }
+  .part-scope { color: var(--accent-purple); }
+  .part-break { color: var(--accent-rose); font-weight: 800; }
+  .part-desc { color: #f8fafc; }
+  .part-body { color: var(--text-secondary); font-size: 0.875rem; white-space: pre-wrap; }
+
+  .cmd-preview-box {
+    background: #090d16;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1rem;
+    overflow-x: auto;
+  }
+
+  .cmd-preview-box code {
+    font-size: 0.85rem;
+    color: var(--accent-emerald);
+  }
+
+  .btn-full {
+    width: 100%;
+  }
+
+  @media (max-width: 960px) {
+    .builder-layout {
+      grid-template-columns: 1fr;
+    }
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { copyAndNotify, toastManager } from '../services/feedback';
+  import { i18n } from '../i18n/i18n-service';
+  import { CommitEngine, type CommitType } from '../domain/commit-engine';
+
+  let selectedType: CommitType = 'feat';
+  const typeBtns = document.querySelectorAll('#type-selector-grid .type-badge');
+  const scopeInput = document.getElementById('builder-scope') as HTMLInputElement;
+  const breakingToggle = document.getElementById('builder-breaking') as HTMLInputElement;
+  const messageInput = document.getElementById('builder-message') as HTMLInputElement;
+  const bodyTextarea = document.getElementById('builder-body') as HTMLTextAreaElement;
+
+  const outType = document.getElementById('out-type');
+  const outScope = document.getElementById('out-scope');
+  const outBreak = document.getElementById('out-break');
+  const outDesc = document.getElementById('out-desc');
+  const outBodyWrapper = document.getElementById('out-body-wrapper');
+  const outBody = document.getElementById('out-body');
+
+  const outCliCmd = document.getElementById('out-cli-cmd');
+  const outGitCmd = document.getElementById('out-git-cmd');
+
+  /**
+   * Helper function to instantiate a CommitEngine domain object from current form UI state.
+   * 
+   * @returns Configured CommitEngine domain instance.
+   */
+  function createEngineFromForm(): CommitEngine {
+    const scope = scopeInput?.value.trim();
+    const isBreaking = breakingToggle?.checked ?? false;
+    const description = messageInput?.value.trim() || '';
+    const body = bodyTextarea?.value.trim();
+
+    return new CommitEngine({
+      type: selectedType,
+      scope,
+      isBreaking,
+      description,
+      body,
+    });
+  }
+
+  /**
+   * Updates preview outputs in the DOM using the CommitEngine domain instance.
+   */
+  function updateOutput(): void {
+    const engine = createEngineFromForm();
+    const result = engine.build();
+    const options = engine.getOptions();
+
+    if (outType) outType.textContent = options.type;
+    if (outScope) outScope.textContent = options.scope ? `(${options.scope})` : '';
+    if (outBreak) outBreak.textContent = options.isBreaking ? '!' : '';
+    if (outDesc) outDesc.textContent = options.description || 'your description';
+
+    if (options.body) {
+      if (outBodyWrapper) outBodyWrapper.style.display = 'block';
+      if (outBody) outBody.textContent = options.body;
+    } else {
+      if (outBodyWrapper) outBodyWrapper.style.display = 'none';
+    }
+
+    if (outCliCmd) outCliCmd.textContent = result.cliCommand;
+    if (outGitCmd) outGitCmd.textContent = result.gitCommand;
+  }
+
+  typeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      typeBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const typeAttr = btn.getAttribute('data-type') as CommitType | null;
+      selectedType = typeAttr || 'feat';
+      updateOutput();
+    });
+  });
+
+  scopeInput?.addEventListener('input', updateOutput);
+  breakingToggle?.addEventListener('change', updateOutput);
+  messageInput?.addEventListener('input', updateOutput);
+  bodyTextarea?.addEventListener('input', updateOutput);
+
+  // Scope suggestions
+  document.querySelectorAll('.sug-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const val = pill.getAttribute('data-val');
+      if (val && scopeInput) {
+        scopeInput.value = val;
+        updateOutput();
+      }
+    });
+  });
+
+  // Reset button
+  document.getElementById('builder-reset-btn')?.addEventListener('click', () => {
+    selectedType = 'feat';
+    typeBtns.forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-type') === 'feat');
+    });
+    if (scopeInput) scopeInput.value = '';
+    if (breakingToggle) breakingToggle.checked = false;
+    if (messageInput) messageInput.value = '';
+    if (bodyTextarea) bodyTextarea.value = '';
+    updateOutput();
+
+    toastManager.show(i18n.t('toast_reset'), { type: 'info' });
+  });
+
+  // Copy Buttons
+  document.getElementById('copy-spec-btn')?.addEventListener('click', () => {
+    const engine = createEngineFromForm();
+    copyAndNotify(engine.formatSpec(), i18n.t('toast_copied_fmt'));
+  });
+
+  document.getElementById('copy-cli-btn')?.addEventListener('click', () => {
+    const engine = createEngineFromForm();
+    copyAndNotify(engine.formatCliCommand(), i18n.t('toast_copied_cmd'));
+  });
+
+  document.getElementById('copy-git-btn')?.addEventListener('click', () => {
+    const engine = createEngineFromForm();
+    copyAndNotify(engine.formatGitCommand(), i18n.t('toast_copied_git'));
+  });
+
+  updateOutput();
+</script>

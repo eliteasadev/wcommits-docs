@@ -1,0 +1,220 @@
+---
+/**
+ * @file SearchModal.astro
+ * @description Modal flotante de búsqueda global por atajo (Cmd+K / Ctrl+K).
+ */
+
+const searchItems = [
+  { titleEn: "Quick Start & Installation", titleEs: "Inicio Rápido e Instalación", category: "Getting Started", link: "#quickstart", descEn: "Run via npx, npm global install, or pnpm dlx", descEs: "Ejecuta con npx, instalación global npm o pnpm dlx" },
+  { titleEn: "Live Commit Message Generator", titleEs: "Generador de Commits en Vivo", category: "Interactive Studio", link: "#builder", descEn: "Build and test conventional commit messages interactively", descEs: "Compón y prueba mensajes de commit interactivos" },
+  { titleEn: "feat — Feature", titleEs: "feat — Característica", category: "Commit Types", link: "#types", descEn: "New feature or capability added to code", descEs: "Nueva función o característica agregada" },
+  { titleEn: "fix — Bug Fix", titleEs: "fix — Corrección de Error", category: "Commit Types", link: "#types", descEn: "Bug fix or error resolution", descEs: "Corrección de bug o resolución de error" },
+  { titleEn: "docs — Documentation", titleEs: "docs — Documentación", category: "Commit Types", link: "#types", descEn: "Documentation and inline comments only", descEs: "Documentación y comentarios en código" },
+  { titleEn: "refactor — Refactor", titleEs: "refactor — Refactorización", category: "Commit Types", link: "#types", descEn: "Code restructure without logic change", descEs: "Reestructuración de código sin cambiar lógica" },
+  { titleEn: "perf — Performance", titleEs: "perf — Rendimiento", category: "Commit Types", link: "#types", descEn: "Performance speedup or memory optimization", descEs: "Mejora de rendimiento o consumo de memoria" },
+  { titleEn: "--type (-t) flag", titleEs: "Bandera --type (-t)", category: "CLI Flags", link: "#reference", descEn: "Required. One of the 11 spec types", descEs: "Requerido. Uno de los 11 tipos permitidos" },
+  { titleEn: "--message (-m) flag", titleEs: "Bandera --message (-m)", category: "CLI Flags", link: "#reference", descEn: "Required. Short description", descEs: "Requerido. Descripción corta" },
+  { titleEn: "--scope (-s) flag", titleEs: "Bandera --scope (-s)", category: "CLI Flags", link: "#reference", descEn: "Optional. Scope in parentheses", descEs: "Opcional. Alcance entre paréntesis" },
+  { titleEn: "--breaking (-b) flag", titleEs: "Bandera --breaking (-b)", category: "CLI Flags", link: "#reference", descEn: "Optional. Adds ! before colon", descEs: "Opcional. Agrega ! antes de los dos puntos" },
+  { titleEn: "Git Workflow & Shell Helper", titleEs: "Workflow Git y Helper de Shell", category: "Workflow", link: "#workflow", descEn: "Integrate wcommits into zshrc/bashrc & git config", descEs: "Integra wcommits en zshrc/bashrc y alias de git" },
+  { titleEn: "Clipboard Support & FAQ", titleEs: "Soporte de Portapapeles y FAQ", category: "Platform", link: "#clipboard", descEn: "macOS pbcopy, Windows clip, Linux xclip", descEs: "macOS pbcopy, Windows clip, Linux xclip" }
+];
+---
+
+<div class="search-modal-backdrop" id="search-modal-backdrop">
+  <div class="search-modal-content glass-card">
+    <div class="search-modal-input-wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="modal-search-input" placeholder="Type a command, flag, or topic..." data-i18n-placeholder="modal_placeholder" autofocus />
+      <span class="esc-badge">ESC</span>
+    </div>
+
+    <div class="search-results-list" id="search-results-list">
+      {searchItems.map(item => (
+        <a href={item.link} class="search-result-item">
+          <div class="result-left">
+            <span class="result-cat">{item.category}</span>
+            <h5 class="result-title" data-title-en={item.titleEn} data-title-es={item.titleEs}>{item.titleEs}</h5>
+            <p class="result-desc" data-desc-en={item.descEn} data-desc-es={item.descEs}>{item.descEs}</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .search-modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(7, 9, 14, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 999;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
+  }
+
+  .search-modal-backdrop.open {
+    display: flex;
+  }
+
+  .search-modal-content {
+    width: 90%;
+    max-width: 640px;
+    background: rgba(15, 23, 42, 0.98);
+    border: 1px solid var(--accent-cyan);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 242, 254, 0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .search-modal-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.15rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--accent-cyan);
+  }
+
+  .search-modal-input-wrapper input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-family: var(--font-sans);
+    width: 100%;
+  }
+
+  .esc-badge {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+  }
+
+  .search-results-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .search-result-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: background var(--transition-fast);
+  }
+
+  .search-result-item:hover {
+    background: rgba(0, 242, 254, 0.1);
+  }
+
+  .result-cat {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+  }
+
+  .result-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0.15rem 0;
+  }
+
+  .result-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  .search-result-item svg {
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+  }
+
+  .search-result-item:hover svg {
+    color: var(--accent-cyan);
+  }
+</style>
+
+<script>
+  import { i18n } from '../i18n/i18n-service';
+
+  const backdrop = document.getElementById('search-modal-backdrop');
+  const modalInput = document.getElementById('modal-search-input') as HTMLInputElement;
+  const resultItems = document.querySelectorAll('.search-result-item');
+  const triggerBtn = document.getElementById('search-trigger-btn');
+
+  function openSearch() {
+    backdrop?.classList.add('open');
+    setTimeout(() => modalInput?.focus(), 50);
+  }
+
+  function closeSearch() {
+    backdrop?.classList.remove('open');
+  }
+
+  triggerBtn?.addEventListener('click', openSearch);
+
+  backdrop?.addEventListener('click', (e) => {
+    if (e.target === backdrop) closeSearch();
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      backdrop?.classList.contains('open') ? closeSearch() : openSearch();
+    }
+    if (e.key === 'Escape') closeSearch();
+  });
+
+  modalInput?.addEventListener('input', () => {
+    const q = modalInput.value.toLowerCase().trim();
+    resultItems.forEach(item => {
+      const text = item.textContent?.toLowerCase() || '';
+      if (text.includes(q)) {
+        (item as HTMLElement).style.display = 'flex';
+      } else {
+        (item as HTMLElement).style.display = 'none';
+      }
+    });
+  });
+
+  resultItems.forEach(item => {
+    item.addEventListener('click', closeSearch);
+  });
+
+  function updateModalTexts() {
+    const lang = i18n.getLanguage();
+    document.querySelectorAll('.result-title').forEach(el => {
+      const val = lang === 'en' ? el.getAttribute('data-title-en') : el.getAttribute('data-title-es');
+      if (val) el.textContent = val;
+    });
+    document.querySelectorAll('.result-desc').forEach(el => {
+      const val = lang === 'en' ? el.getAttribute('data-desc-en') : el.getAttribute('data-desc-es');
+      if (val) el.textContent = val;
+    });
+  }
+
+  updateModalTexts();
+  i18n.subscribe(updateModalTexts);
+</script>

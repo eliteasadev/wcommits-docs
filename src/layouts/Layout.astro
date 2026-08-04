@@ -1,23 +1,65 @@
+---
+/**
+ * @file Layout.astro
+ * @description Layout HTML5 raíz de la aplicación con SEO (OG tags, Twitter cards), importación de estilos globales, fuentes y script de i18n cliente.
+ */
+
+import Header from '../components/Header.astro';
+import SearchModal from '../components/SearchModal.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "wcommits — Zero-Dependency Conventional Commits CLI Documentation",
+  description = "Official documentation for wcommits: A zero-dependency Node.js CLI tool that generates specification-compliant Conventional Commits messages with clipboard integration and type validation."
+} = Astro.props;
+---
+
 <!doctype html>
-<html lang="en">
+<html lang="es">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+
+		<!-- Primary Meta Tags -->
+		<title>{title}</title>
+		<meta name="title" content={title} />
+		<meta name="description" content={description} />
+		<meta name="keywords" content="wcommits, conventional commits, git commit, cli tool, zero dependency, git workflow, commit generator" />
+		<meta name="author" content="eliteasadev" />
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://github.com/eliteasadev/wcommits" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:title" content={title} />
+		<meta property="twitter:description" content={description} />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	</head>
 	<body>
-		<slot />
+		<Header />
+		<main id="main-content">
+			<slot />
+		</main>
+		<SearchModal />
+		<Footer />
+		<div id="toast-container" aria-live="polite"></div>
+
+		<script>
+			import '../i18n/i18n-client';
+		</script>
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>

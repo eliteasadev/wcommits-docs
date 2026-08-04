@@ -1,0 +1,547 @@
+---
+/**
+ * @file Hero.astro
+ * @description Sección principal de aterrizaje con demostración interactiva de terminal en vivo.
+ */
+---
+
+<section class="hero-section">
+  <div class="hero-bg-glow"></div>
+  <div class="container hero-container">
+    
+    <div class="hero-content">
+      <div class="badge-eyebrow">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+        <span data-i18n="hero_badge">Zero-Dependency CLI Tool</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span data-i18n="hero_title_1">Conventional Commits.</span><br/>
+        <span class="gradient-text" data-i18n="hero_title_2">Zero Friction.</span>
+      </h1>
+
+      <p class="hero-description" data-i18n="hero_desc">
+        Generate perfectly formatted, specification-compliant git commit messages. Features automatic clipboard integration, strict type validation, and instant team standards.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#builder" class="btn btn-primary btn-hero">
+          <span data-i18n="hero_btn_builder">Try Live Generator</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+
+        <div class="quick-install-box">
+          <div class="install-code">
+            <span class="prompt-sign">$</span>
+            <code id="hero-install-cmd">npx wcommits -t feat -m "hello world"</code>
+          </div>
+          <button class="copy-btn" id="hero-copy-install-btn" title="Copy to clipboard">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-pills">
+        <div class="pill">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span data-i18n="pill_zero_deps">100% Zero Dependencies</span>
+        </div>
+        <div class="pill">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span data-i18n="pill_auto_clipboard">Auto Clipboard Sync</span>
+        </div>
+        <div class="pill">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span data-i18n="pill_spec_types">11 Standard Spec Types</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terminal Mockup -->
+    <div class="terminal-wrapper">
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+        </div>
+        <div class="terminal-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+          <span data-i18n="term_title">zsh — wcommits interactive demo</span>
+        </div>
+        <div class="terminal-badge" data-i18n="term_clip_active">Clipboard Active</div>
+      </div>
+
+      <div class="terminal-body">
+        <div class="terminal-presets">
+          <span class="preset-label" data-i18n="term_quick_demo">Quick Demo:</span>
+          <button class="preset-btn active" data-type="feat" data-scope="auth" data-msg="add JWT token validation" data-breaking="false" data-i18n="preset_feature">Feature</button>
+          <button class="preset-btn" data-type="fix" data-scope="parser" data-msg="handle empty input gracefully" data-breaking="false" data-i18n="preset_fix">Bug Fix</button>
+          <button class="preset-btn" data-type="feat" data-scope="api" data-msg="remove deprecated endpoints" data-breaking="true" data-i18n="preset_breaking">Breaking</button>
+        </div>
+
+        <div class="terminal-line">
+          <span class="term-path">user@macbook ~/dev/app %</span>
+          <span class="term-cmd" id="terminal-typed-cmd">npx wcommits -t feat -s auth -m "add JWT token validation"</span>
+          <span class="cursor"></span>
+        </div>
+
+        <div class="terminal-output" id="terminal-output-box">
+          <div class="output-row success">
+            <span class="status-icon">✔</span>
+            <span class="status-text" data-i18n="term_generated_copied">Mensaje generado y copiado al portapapeles:</span>
+          </div>
+          <div class="output-preview">
+            <span class="preview-type" id="term-type-tag">feat</span><span class="preview-scope" id="term-scope-tag">(auth)</span><span class="preview-breaking" id="term-break-tag"></span>: <span class="preview-msg" id="term-msg-tag">add JWT token validation</span>
+          </div>
+          <div class="output-git-tip">
+            <span class="dim" data-i18n="term_run">Run:</span> <code class="git-cmd" id="term-git-cmd">git commit -m "feat(auth): add JWT token validation"</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="terminal-footer">
+        <div class="term-info">
+          <span class="dot-online"></span> Clipboard Engine: <span id="term-platform">macOS (pbcopy)</span>
+        </div>
+        <button class="btn-term-copy" id="term-copy-all-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span data-i18n="term_copy_output">Copy Commit Output</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    position: relative;
+    padding-top: 5rem;
+    padding-bottom: 6rem;
+    overflow: hidden;
+  }
+
+  .hero-bg-glow {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1000px;
+    height: 600px;
+    background: var(--gradient-hero-glow);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-container {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-title {
+    font-size: 3.25rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.25rem;
+    color: #ffffff;
+  }
+
+  .gradient-text {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-description {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    max-width: 540px;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+    width: 100%;
+  }
+
+  .btn-hero {
+    padding: 0.85rem 1.75rem;
+    font-size: 1rem;
+  }
+
+  .quick-install-box {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.85rem;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+  }
+
+  .install-code {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--accent-cyan);
+  }
+
+  .prompt-sign {
+    color: var(--text-muted);
+    user-select: none;
+  }
+
+  .copy-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: color var(--transition-fast);
+
+    display: flex;
+    align-items: center;
+  }
+
+  .copy-btn:hover {
+    color: var(--accent-cyan);
+  }
+
+  .hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .pill svg {
+    color: var(--accent-emerald);
+  }
+
+  /* Terminal Mockup */
+  .terminal-wrapper {
+    background: #090d16;
+    border: 1px solid rgba(0, 242, 254, 0.2);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 242, 254, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: rgba(15, 23, 42, 0.9);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .terminal-dots {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-red { background: #ff5f56; }
+  .dot-yellow { background: #ffbd2e; }
+  .dot-green { background: #27c93f; }
+
+  .terminal-title {
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .terminal-badge {
+    font-size: 0.68rem;
+    font-family: var(--font-mono);
+    color: var(--accent-emerald);
+    background: rgba(52, 211, 153, 0.1);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+  }
+
+  .terminal-body {
+    padding: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .terminal-presets {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  }
+
+  .preset-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .preset-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .preset-btn:hover, .preset-btn.active {
+    background: rgba(0, 242, 254, 0.15);
+    border-color: var(--accent-cyan);
+    color: #ffffff;
+  }
+
+  .terminal-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    color: #e2e8f0;
+  }
+
+  .term-path {
+    color: var(--accent-emerald);
+    font-weight: 600;
+  }
+
+  .term-cmd {
+    color: var(--accent-cyan);
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: var(--accent-cyan);
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .terminal-output {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .output-row.success {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-emerald);
+    font-size: 0.8rem;
+  }
+
+  .output-preview {
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: 0.5rem 0;
+    color: #ffffff;
+  }
+
+  .preview-type { color: var(--accent-cyan); }
+  .preview-scope { color: var(--accent-indigo); }
+  .preview-breaking { color: var(--accent-rose); font-weight: 800; }
+  .preview-msg { color: #f8fafc; }
+
+  .output-git-tip {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .git-cmd {
+    color: var(--accent-amber);
+  }
+
+  .terminal-footer {
+    padding: 0.6rem 1rem;
+    background: rgba(15, 23, 42, 0.8);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .term-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .dot-online {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-emerald);
+    box-shadow: 0 0 8px var(--accent-emerald);
+  }
+
+  .btn-term-copy {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(0, 242, 254, 0.1);
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    color: var(--accent-cyan);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .btn-term-copy:hover {
+    background: rgba(0, 242, 254, 0.25);
+    color: #ffffff;
+  }
+
+  @media (max-width: 1024px) {
+    .hero-container {
+      grid-template-columns: 1fr;
+    }
+    .hero-content {
+      align-items: center;
+      text-align: center;
+    }
+    .hero-description {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-cta-group {
+      justify-content: center;
+    }
+    .hero-pills {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-title {
+      font-size: 2.25rem;
+    }
+  }
+</style>
+
+<script>
+  import { copyAndNotify } from '../services/feedback';
+  import { i18n } from '../i18n/i18n-service';
+
+  const copyInstallBtn = document.getElementById('hero-copy-install-btn');
+  const installCmdText = document.getElementById('hero-install-cmd')?.textContent || 'npx wcommits -t feat -m "hello world"';
+
+  copyInstallBtn?.addEventListener('click', () => {
+    copyAndNotify(installCmdText, i18n.t('toast_copied_cmd'));
+  });
+
+  // Interactive preset selector for terminal hero
+  const presetBtns = document.querySelectorAll('.preset-btn');
+  const typedCmd = document.getElementById('terminal-typed-cmd');
+  const typeTag = document.getElementById('term-type-tag');
+  const scopeTag = document.getElementById('term-scope-tag');
+  const breakTag = document.getElementById('term-break-tag');
+  const msgTag = document.getElementById('term-msg-tag');
+  const gitCmd = document.getElementById('term-git-cmd');
+  const copyAllBtn = document.getElementById('term-copy-all-btn');
+
+  let currentCommitString = 'feat(auth): add JWT token validation';
+
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      presetBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const type = btn.getAttribute('data-type') || 'feat';
+      const scope = btn.getAttribute('data-scope') || '';
+      const msg = btn.getAttribute('data-msg') || '';
+      const isBreaking = btn.getAttribute('data-breaking') === 'true';
+
+      const scopeFlag = scope ? ` -s ${scope}` : '';
+      const breakFlag = isBreaking ? ' -b' : '';
+
+      if (typedCmd) typedCmd.textContent = `npx wcommits -t ${type}${scopeFlag}${breakFlag} -m "${msg}"`;
+      if (typeTag) typeTag.textContent = type;
+      if (scopeTag) scopeTag.textContent = scope ? `(${scope})` : '';
+      if (breakTag) breakTag.textContent = isBreaking ? '!' : '';
+      if (msgTag) msgTag.textContent = msg;
+
+      const formatted = `${type}${scope ? `(${scope})` : ''}${isBreaking ? '!' : ''}: ${msg}`;
+      currentCommitString = formatted;
+
+      if (gitCmd) gitCmd.textContent = `git commit -m "${formatted}"`;
+    });
+  });
+
+  copyAllBtn?.addEventListener('click', () => {
+    copyAndNotify(currentCommitString, i18n.t('toast_copied_commit'));
+  });
+</script>

@@ -1,0 +1,245 @@
+---
+/**
+ * @file Workflow.astro
+ * @description Guía paso a paso de integración de wcommits en el flujo diario de Git y configuración de shell / alias.
+ */
+---
+
+<section class="section" id="workflow">
+  <div class="container">
+    <div class="section-header">
+      <div class="badge-eyebrow" data-i18n="wf_eyebrow">Git Integration</div>
+      <h2 class="section-title" data-i18n="wf_title">Seamless Git Workflow Integration</h2>
+      <p class="section-subtitle" data-i18n="wf_subtitle">
+        How to incorporate wcommits into your daily developer routine and automate commit formatting.
+      </p>
+    </div>
+
+    <!-- Workflow Steps Visual Timeline -->
+    <div class="timeline-wrapper">
+      <div class="timeline-step">
+        <div class="step-number">01</div>
+        <div class="glass-card step-card">
+          <div class="step-header">
+            <h4 data-i18n="wf_step1_title">Understand What Changed</h4>
+            <span class="step-cmd">git diff --staged</span>
+          </div>
+          <p data-i18n="wf_step1_desc">Inspect your staged changes using git diff --staged (or stage files with git add .) to verify what files and functions were modified.</p>
+        </div>
+      </div>
+
+      <div class="timeline-step">
+        <div class="step-number">02</div>
+        <div class="glass-card step-card">
+          <div class="step-header">
+            <h4 data-i18n="wf_step2_title">Compose & Validate Message</h4>
+            <span class="step-cmd">npx wcommits -t &lt;type&gt; -m "&lt;desc&gt;"</span>
+          </div>
+          <p data-i18n="wf_step2_desc">Run wcommits with your chosen type and description. The CLI validates the type and automatically copies the result to your clipboard.</p>
+        </div>
+      </div>
+
+      <div class="timeline-step">
+        <div class="step-number">03</div>
+        <div class="glass-card step-card">
+          <div class="step-header">
+            <h4 data-i18n="wf_step3_title">Commit with Verified Format</h4>
+            <span class="step-cmd">git commit -m "..."</span>
+          </div>
+          <p data-i18n="wf_step3_desc">Paste the copied message into your git commit command or use your shell's clipboard paste shortcut (Cmd+V / Ctrl+V).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced Shell Integration & Git Hooks -->
+    <div class="advanced-grid">
+      <!-- Shell Helper Function -->
+      <div class="glass-card advanced-card">
+        <div class="adv-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+          <h3 data-i18n="adv_shell_title">Shell Helper Function (.zshrc / .bashrc)</h3>
+        </div>
+        <p class="adv-desc" data-i18n="adv_shell_desc">Add this helper function to your shell config to generate and commit in a single step:</p>
+        <div class="code-block-large">
+          <pre><code><span class="token-comment"># Add to ~/.zshrc or ~/.bashrc</span>
+wcommit() &#123;
+  <span class="token-cmd">npx</span> wcommits "$@"
+  <span class="token-keyword">if</span> [ $? -eq 0 ]; <span class="token-keyword">then</span>
+    <span class="token-comment"># Message is already in clipboard!</span>
+    <span class="token-cmd">echo</span> <span class="token-string">"🚀 Ready to commit..."</span>
+  <span class="token-keyword">fi</span>
+&#125;</code></pre>
+          <button class="code-copy-btn" data-code={`wcommit() {\n  npx wcommits "$@"\n  if [ $? -eq 0 ]; then\n    echo "🚀 Ready to commit..."\n  fi\n}`}>Copy</button>
+        </div>
+      </div>
+
+      <!-- Git Alias -->
+      <div class="glass-card advanced-card">
+        <div class="adv-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          <h3 data-i18n="adv_alias_title">Git Alias Shortcut</h3>
+        </div>
+        <p class="adv-desc" data-i18n="adv_alias_desc">Configure a global git alias for instant commit validation:</p>
+        <div class="code-block-large">
+          <pre><code><span class="token-cmd">git</span> config --global alias.wc <span class="token-string">"!npx wcommits"</span></code></pre>
+          <button class="code-copy-btn" data-code='git config --global alias.wc "!npx wcommits"'>Copy</button>
+        </div>
+        <p class="adv-desc" style="margin-top: 1rem;" data-i18n="adv_alias_then">Now you can use git wc directly:</p>
+        <div class="code-block-large">
+          <pre><code><span class="token-cmd">git</span> wc <span class="token-flag">-t</span> feat <span class="token-flag">-s</span> auth <span class="token-flag">-m</span> <span class="token-string">"add session storage"</span></code></pre>
+          <button class="code-copy-btn" data-code='git wc -t feat -s auth -m "add session storage"'>Copy</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .timeline-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .timeline-step {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .step-number {
+    font-family: var(--font-mono);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    opacity: 0.8;
+  }
+
+  .step-card {
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .step-header h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.4rem;
+  }
+
+  .step-cmd {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent-emerald);
+    background: rgba(52, 211, 153, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .step-card p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .advanced-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .advanced-card {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .adv-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--accent-cyan);
+  }
+
+  .adv-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .adv-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .code-block-large {
+    position: relative;
+    background: #090d16;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+  }
+
+  .code-block-large pre {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: #e2e8f0;
+    margin: 0;
+    white-space: pre-wrap;
+  }
+
+  .token-comment { color: var(--text-muted); font-style: italic; }
+  .token-keyword { color: var(--accent-purple); }
+
+  .code-copy-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    z-index: 2;
+    line-height: 1.2;
+  }
+
+  .code-copy-btn:hover {
+    background: rgba(0, 242, 254, 0.2);
+    color: #ffffff;
+    border-color: var(--accent-cyan);
+  }
+
+  @media (max-width: 900px) {
+    .timeline-wrapper {
+      grid-template-columns: 1fr;
+    }
+    .advanced-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { copyAndNotify } from '../services/feedback';
+  import { i18n } from '../i18n/i18n-service';
+
+  document.querySelectorAll('#workflow .code-copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const code = btn.getAttribute('data-code');
+      if (code) {
+        copyAndNotify(code, i18n.t('toast_copied_snippet'));
+      }
+    });
+  });
+</script>

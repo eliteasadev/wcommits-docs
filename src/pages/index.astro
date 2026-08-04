@@ -1,11 +1,25 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+/**
+ * @file index.astro
+ * @description Página de inicio principal de la documentación de wcommits.
+ */
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import QuickStart from '../components/QuickStart.astro';
+import InteractiveBuilder from '../components/InteractiveBuilder.astro';
+import CommitTypes from '../components/CommitTypes.astro';
+import CliReference from '../components/CliReference.astro';
+import Workflow from '../components/Workflow.astro';
+import ClipboardSupport from '../components/ClipboardSupport.astro';
 ---
 
 <Layout>
-	<Welcome />
+	<Hero />
+	<QuickStart />
+	<InteractiveBuilder />
+	<CommitTypes />
+	<CliReference />
+	<Workflow />
+	<ClipboardSupport />
 </Layout>

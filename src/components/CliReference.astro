@@ -1,0 +1,287 @@
+---
+/**
+ * @file CliReference.astro
+ * @description Tabla de referencia interactiva con búsqueda en tiempo real de banderas y opciones del CLI.
+ */
+
+const flags = [
+  {
+    flag: "--type",
+    short: "-t",
+    required: true,
+    type: "string",
+    descEn: "Commit type. Must be one of the 11 spec types (feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert).",
+    descEs: "Tipo de commit. Debe ser uno de los 11 tipos permitidos por la especificación.",
+    example: '-t feat'
+  },
+  {
+    flag: "--message",
+    short: "-m",
+    required: true,
+    type: "string",
+    descEn: "Short description of the commit in imperative mood (e.g. 'add user auth' not 'added user auth').",
+    descEs: "Descripción corta del commit en modo imperativo (ej. 'add user auth' en lugar de 'added user auth').",
+    example: '-m "add OAuth2 provider"'
+  },
+  {
+    flag: "--scope",
+    short: "-s",
+    required: false,
+    type: "string",
+    descEn: "Scope of the change, enclosed in parentheses after the type.",
+    descEs: "Alcance del cambio, encerrado entre paréntesis después del tipo.",
+    example: '-s parser'
+  },
+  {
+    flag: "--breaking",
+    short: "-b",
+    required: false,
+    type: "boolean",
+    descEn: "Marks the commit as a breaking change by inserting an exclamation mark (!) before the colon.",
+    descEs: "Marca el commit como un cambio disruptivo (breaking change) agregando un signo de exclamación (!) antes de los dos puntos.",
+    example: '-b'
+  },
+  {
+    flag: "--body",
+    short: "",
+    required: false,
+    type: "string",
+    descEn: "Extended commit body for additional details, migration notes, or breaking change descriptions.",
+    descEs: "Cuerpo extendido para detalles adicionales, notas de migración o explicaciones de breaking changes.",
+    example: '--body "Removed v1 API endpoints"'
+  },
+  {
+    flag: "--help",
+    short: "-h",
+    required: false,
+    type: "boolean",
+    descEn: "Displays the CLI help menu, allowed types list, and usage examples.",
+    descEs: "Muestra el menú de ayuda del CLI, la lista de tipos permitidos y ejemplos de uso.",
+    example: '-h'
+  },
+  {
+    flag: "--version",
+    short: "-v",
+    required: false,
+    type: "boolean",
+    descEn: "Outputs the current version of wcommits.",
+    descEs: "Imprime la versión actual de wcommits.",
+    example: '-v'
+  }
+];
+---
+
+<section class="section" id="reference">
+  <div class="container">
+    <div class="section-header">
+      <div class="badge-eyebrow" data-i18n="ref_eyebrow">CLI Reference</div>
+      <h2 class="section-title" data-i18n="ref_title">Flags & Options</h2>
+      <p class="section-subtitle" data-i18n="ref_subtitle">
+        Complete reference for all command-line options supported by wcommits.
+      </p>
+    </div>
+
+    <!-- Search filter input -->
+    <div class="ref-search-container">
+      <div class="ref-search-box">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="flag-search-input" placeholder="Search flags (e.g. --scope, breaking, -m)..." data-i18n-placeholder="ref_search_placeholder" />
+      </div>
+    </div>
+
+    <!-- Flags Table Card -->
+    <div class="glass-card table-card">
+      <div class="table-wrapper">
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th data-i18n="th_flag">Flag</th>
+              <th data-i18n="th_short">Short</th>
+              <th data-i18n="th_status">Status</th>
+              <th data-i18n="th_type">Type</th>
+              <th data-i18n="th_desc">Description</th>
+              <th data-i18n="th_example">Example</th>
+            </tr>
+          </thead>
+          <tbody id="flags-table-body">
+            {flags.map(f => (
+              <tr class="flag-tr">
+                <td class="flag-name">
+                  <code>{f.flag}</code>
+                </td>
+                <td class="flag-short">
+                  {f.short ? <code>{f.short}</code> : <span class="dim">—</span>}
+                </td>
+                <td>
+                  {f.required ? (
+                    <span class="status-pill pill-req" data-i18n="pill_req">Required</span>
+                  ) : (
+                    <span class="status-pill pill-opt" data-i18n="pill_opt">Optional</span>
+                  )}
+                </td>
+                <td class="flag-type">
+                  <code>{f.type}</code>
+                </td>
+                <td class="flag-desc" data-desc-en={f.descEn} data-desc-es={f.descEs}>{f.descEs}</td>
+                <td class="flag-example">
+                  <code>{f.example}</code>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ref-search-container {
+    max-width: 500px;
+    margin: 0 auto 2rem auto;
+  }
+
+  .ref-search-box {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    color: var(--text-secondary);
+  }
+
+  .ref-search-box input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 0.9375rem;
+    width: 100%;
+    font-family: var(--font-sans);
+  }
+
+  .table-card {
+    overflow: hidden;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .ref-table th {
+    background: rgba(15, 23, 42, 0.95);
+    padding: 1rem 1.25rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .ref-table td {
+    padding: 1.15rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.9rem;
+  }
+
+  .ref-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .ref-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .flag-name code {
+    color: var(--accent-cyan);
+    font-weight: 700;
+    font-size: 0.9375rem;
+  }
+
+  .flag-short code {
+    color: var(--accent-indigo);
+  }
+
+  .flag-type code {
+    color: var(--accent-purple);
+    font-size: 0.8rem;
+  }
+
+  .flag-desc {
+    color: var(--text-secondary);
+    line-height: 1.5;
+    max-width: 380px;
+  }
+
+  .flag-example code {
+    color: var(--accent-amber);
+    font-size: 0.8rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .status-pill {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-full);
+  }
+
+  .pill-req {
+    background: rgba(251, 113, 133, 0.15);
+    color: var(--accent-rose);
+    border: 1px solid rgba(251, 113, 133, 0.3);
+  }
+
+  .pill-opt {
+    background: rgba(148, 163, 184, 0.15);
+    color: var(--text-secondary);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+  }
+
+  .dim {
+    color: var(--text-muted);
+  }
+</style>
+
+<script>
+  import { i18n } from '../i18n/i18n-service';
+
+  const searchInput = document.getElementById('flag-search-input') as HTMLInputElement;
+  const rows = document.querySelectorAll('.flag-tr');
+
+  searchInput?.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase().trim();
+    rows.forEach(row => {
+      const text = row.textContent?.toLowerCase() || '';
+      if (text.includes(query)) {
+        (row as HTMLElement).style.display = '';
+      } else {
+        (row as HTMLElement).style.display = 'none';
+      }
+    });
+  });
+
+  function updateFlagDescTexts() {
+    const lang = i18n.getLanguage();
+    document.querySelectorAll('.flag-desc').forEach(el => {
+      const val = lang === 'en' ? el.getAttribute('data-desc-en') : el.getAttribute('data-desc-es');
+      if (val) el.textContent = val;
+    });
+  }
+
+  updateFlagDescTexts();
+  i18n.subscribe(updateFlagDescTexts);
+</script>

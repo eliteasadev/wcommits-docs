@@ -1,0 +1,277 @@
+---
+/**
+ * @file ClipboardSupport.astro
+ * @description Componente de documentación sobre compatibilidad de portapapeles y preguntas frecuentes (FAQ).
+ * Utiliza i18n centralizado con claves fuertemente tipadas (`TranslationKey`).
+ */
+
+import { i18n } from '../i18n/i18n-service';
+import type { TranslationKey } from '../i18n/translations';
+
+/**
+ * Interfaz para definir la estructura de la información por plataforma/sistema operativo.
+ */
+interface PlatformItem {
+  os: string;
+  tool: string;
+  statusKey: TranslationKey;
+  descKey: TranslationKey;
+  icon: string;
+}
+
+/**
+ * Interfaz para representar una pregunta y respuesta dentro del acordeón de FAQ.
+ */
+interface FaqItem {
+  qKey: TranslationKey;
+  aKey: TranslationKey;
+}
+
+/**
+ * Lista estructurada de plataformas soportadas por el motor de portapapeles nativo de wcommits.
+ */
+const platforms: PlatformItem[] = [
+  {
+    os: "macOS",
+    tool: "pbcopy",
+    statusKey: "clip_mac_status",
+    descKey: "clip_mac_desc",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06z"></path><path d="M10 2c1 .5 2 2 2 3.5s-1.5 2.5-2.5 2.5c-.5 0-1.5-.5-2-1.5S8.5 3.5 10 2z"></path></svg>`
+  },
+  {
+    os: "Windows",
+    tool: "clip",
+    statusKey: "clip_win_status",
+    descKey: "clip_win_desc",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8"></rect><rect x="13" y="3" width="8" height="8"></rect><rect x="3" y="13" width="8" height="8"></rect><rect x="13" y="13" width="8" height="8"></rect></svg>`
+  },
+  {
+    os: "Linux",
+    tool: "xclip / xsel",
+    statusKey: "clip_lin_status",
+    descKey: "clip_lin_desc",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`
+  }
+];
+
+/**
+ * Colección estructurada de preguntas frecuentes y resolución de errores mapeadas a i18n.
+ */
+const faqs: FaqItem[] = [
+  {
+    qKey: "faq_1_q",
+    aKey: "faq_1_a"
+  },
+  {
+    qKey: "faq_2_q",
+    aKey: "faq_2_a"
+  },
+  {
+    qKey: "faq_3_q",
+    aKey: "faq_3_a"
+  },
+  {
+    qKey: "faq_4_q",
+    aKey: "faq_4_a"
+  }
+];
+---
+
+<section class="section" id="clipboard">
+  <div class="container">
+    <div class="section-header">
+      <div class="badge-eyebrow" data-i18n="clip_eyebrow">{i18n.t('clip_eyebrow')}</div>
+      <h2 class="section-title" data-i18n="clip_title">{i18n.t('clip_title')}</h2>
+      <p class="section-subtitle" data-i18n="clip_subtitle">
+        {i18n.t('clip_subtitle')}
+      </p>
+    </div>
+
+    <!-- Platform Cards -->
+    <div class="platform-grid">
+      {platforms.map(p => (
+        <div class="glass-card platform-card">
+          <div class="platform-header">
+            <div class="platform-icon" set:html={p.icon} />
+            <div>
+              <h4 class="platform-os">{p.os}</h4>
+              <span class="platform-tool">Tool: <code>{p.tool}</code></span>
+            </div>
+            <span class="platform-status" data-i18n={p.statusKey}>{i18n.t(p.statusKey)}</span>
+          </div>
+          <p class="platform-desc" data-i18n={p.descKey}>{i18n.t(p.descKey)}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq-container">
+      <h3 class="faq-title" data-i18n="faq_section_title">{i18n.t('faq_section_title')}</h3>
+      <div class="faq-accordion">
+        {faqs.map((faq, i) => (
+          <div class="glass-card faq-item">
+            <button class="faq-question-btn" data-index={i}>
+              <span class="faq-q-text" data-i18n={faq.qKey}>{i18n.t(faq.qKey)}</span>
+              <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer-panel" id={`faq-ans-${i}`}>
+              <p class="faq-a-text" data-i18n-html={faq.aKey} set:html={i18n.t(faq.aKey)}></p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .platform-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .platform-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .platform-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+  }
+
+  .platform-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-md);
+    background: rgba(0, 242, 254, 0.1);
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    color: var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .platform-os {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .platform-tool {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  .platform-tool code {
+    color: var(--accent-cyan);
+  }
+
+  .platform-status {
+    margin-left: auto;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-full);
+    background: rgba(52, 211, 153, 0.15);
+    color: var(--accent-emerald);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+  }
+
+  .platform-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .faq-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #ffffff;
+  }
+
+  .faq-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-item {
+    overflow: hidden;
+  }
+
+  .faq-question-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+  }
+
+  .faq-question-btn:hover {
+    color: var(--accent-cyan);
+  }
+
+  .chevron-icon {
+    transition: transform var(--transition-normal);
+  }
+
+  .faq-item.open .chevron-icon {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer-panel {
+    display: none;
+    padding: 0 1.25rem 1.25rem 1.25rem;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    border-top: 1px dashed rgba(255, 255, 255, 0.05);
+  }
+
+  .faq-item.open .faq-answer-panel {
+    display: block;
+  }
+
+  @media (max-width: 900px) {
+    .platform-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Inicialización del acordeón FAQ interactivo.
+   * La sincronización de i18n es manejada centralizadamente por `i18n-client.ts`.
+   */
+  document.querySelectorAll('.faq-question-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      item?.classList.toggle('open');
+    });
+  });
+</script>

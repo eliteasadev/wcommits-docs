@@ -1,0 +1,151 @@
+---
+/**
+ * @file Footer.astro
+ * @description Pie de página con enlaces de navegación, recursos externos, copyright y botón de subir al inicio.
+ */
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <div class="brand-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+        <span>wcommits</span>
+      </div>
+      <p class="brand-sub" data-i18n="footer_sub">Zero-dependency Conventional Commits CLI generator for high-velocity developer teams.</p>
+    </div>
+
+    <div class="footer-links">
+      <div class="link-col">
+        <h5 data-i18n="footer_doc_title">Documentation</h5>
+        <a href="#quickstart" data-i18n="nav_quickstart">Quick Start</a>
+        <a href="#builder" data-i18n="nav_builder">Live Generator</a>
+        <a href="#types" data-i18n="nav_types">Commit Types</a>
+        <a href="#reference" data-i18n="nav_reference">CLI Reference</a>
+      </div>
+
+      <div class="link-col">
+        <h5 data-i18n="footer_res_title">Resources</h5>
+        <a href="https://github.com/eliteasadev/wcommits" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+        <a href="https://www.conventionalcommits.org/en/v1.0.0/" target="_blank" rel="noopener noreferrer">Conventional Commits Spec</a>
+        <a href="#clipboard">Clipboard Engine</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container bottom-inner">
+      <p>&copy; {new Date().getFullYear()} eliteasadev. Released under MIT License.</p>
+      <a href="#header" class="back-to-top">
+        <span data-i18n="back_to_top">Back to top</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: #040609;
+    border-top: 1px solid var(--border-color);
+    padding-top: 4rem;
+    position: relative;
+  }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 3rem;
+    padding-bottom: 3.5rem;
+  }
+
+  .footer-brand {
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--accent-cyan);
+  }
+
+  .brand-sub {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 4rem;
+  }
+
+  .link-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .link-col h5 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    margin-bottom: 0.4rem;
+  }
+
+  .link-col a {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .link-col a:hover {
+    color: var(--accent-cyan);
+  }
+
+  .footer-bottom {
+    background: rgba(0, 0, 0, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.25rem 0;
+  }
+
+  .bottom-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  .back-to-top {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .back-to-top:hover {
+    color: var(--accent-cyan);
+  }
+
+  @media (max-width: 768px) {
+    .footer-inner {
+      flex-direction: column;
+    }
+    .footer-links {
+      flex-direction: column;
+      gap: 2rem;
+    }
+  }
+</style>
